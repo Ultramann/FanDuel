@@ -17,9 +17,11 @@ class PlayerDictionary():
         # After I define the team model, this function will be called on the master player dict object and return a team object with randomized players
         pass
 
-class DotNotationPlayerDictionary():
+class SimplePlayerDictionary():
     # Master dictionary with all the player objects as attributes
     # Great for quickly getting into the dict and retriving info
+    # via dot notation
+
     def __init__(self, player_dict):
         for player_name in player_dict.keys():
             player = Player(player_name, player_dict[player_name])
