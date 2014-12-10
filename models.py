@@ -14,8 +14,7 @@ class PlayerDictionary():
             setattr(self, position, player)
 
     def random_team(self):
-        # After I define the team model, this function will be called on the master player dict object and return a team object with randomized players
-        team_positions = ['QB', 'WR', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
+        team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         #                         I THINK \/ SELF IS THE PLAYERDICTIONARY THAT YOU'RE CALLING RANDOM_TEAM ON...
         team_dict= {position: random.choice(getattr(self, ''.join(i for i in position if not i.isdigit())).keys())
                     for position in team_positions}
@@ -50,3 +49,8 @@ class Team(PlayerDictionary):
     def __str__(self):
         # This defines the how the object is printed as a string
         pass
+    def __add__(self, other):
+        if type(other) is not Team:
+            raise TypeError('unsupported operand type(s) for +' + ': \''+type_as_str(self)+'\' and \''+type_as_str(right)+'\'')
+        team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
+        # NEED TO SELECT RANDOM SUBSET OF TEAM_POSITIONS AND CONVERSE TO CHOOSE FROM SELF AND OTHER
