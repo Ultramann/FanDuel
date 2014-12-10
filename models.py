@@ -42,7 +42,7 @@ class Player():
             setattr(self, attribute.lower(), data) 
             
 class Team(PlayerDictionary):
-    # MAYBE THIS SHOULD JUST BE A DICTIONARY...
+    # MAYBE THIS SHOULD JUST BE A DICTIONARY...THOUGH IT SEEMS TO BE WORKING
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
                                 'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
         for position, player in set_positions_dict.iteritems():
