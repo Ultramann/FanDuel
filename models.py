@@ -1,4 +1,5 @@
 import re
+import random
 
 class PlayerDictionary():
     # Master dictionary with positions as keys and dictionaries of 
@@ -15,12 +16,12 @@ class PlayerDictionary():
 
     def random_team(self):
         team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
-        #                         I THINK \/ SELF IS THE PLAYERDICTIONARY THAT YOU'RE CALLING RANDOM_TEAM ON...
-        team_dict= {position: random.choice(getattr(self, ''.join(i for i in position if not i.isdigit())).keys())
-                    for position in team_positions}
-        # GO BACK TO THIS IF THE DICT COMP DOESN'T WORK
-        #for position in team_positions # I THINK \/ SELF IS THE PLAYERDICTIONARY THAT YOU'RE CALLING RANDOM_TEAM ON...
-        #     rand_player = random.choice(getattr(self, ''.join(i for i in position if not i.isdigit())).keys())
+        team_dict = {}
+        for position in team_positions: 
+            simple_position = ''.join(i for i in position if not i.isdigit()) 
+            rand_position_dict = getattr(self, simple_position)
+            rand_player = random.choice(rand_position_dict.keys())
+            team_dict[position] = rand_position_dict[rand_player]
         rand_team = Team(team_dict)
         return rand_team
         
@@ -43,8 +44,8 @@ class Player():
 class Team(PlayerDictionary):
     # MAYBE THIS SHOULD JUST BE A DICTIONARY...
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
-                                            'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
-        for position, player in set_positions_dict:
+                                'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
+        for position, player in set_positions_dict.iteritems():
             setattr(self, position, player)
     def __str__(self):
         # This defines the how the object is printed as a string
