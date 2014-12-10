@@ -54,4 +54,6 @@ class Team(PlayerDictionary):
         if type(other) is not Team:
             raise TypeError('unsupported operand type(s) for +' + ': \''+type_as_str(self)+'\' and \''+type_as_str(right)+'\'')
         team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
-        # NEED TO SELECT RANDOM SUBSET OF TEAM_POSITIONS AND CONVERSE TO CHOOSE FROM SELF AND OTHER
+        self_positions_kept = random.sample(team_positions, 
+                                            random.randint(1, len(team_positions )))
+        other_postions_kept = list(set(team_positions) - set(self_positions_kept))
