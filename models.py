@@ -124,3 +124,9 @@ class Team(PlayerDictionary):
             total_salary += player.salary
 
         return total_salary
+
+    def mutate_team(self):
+        pass
+
+    def mutate_rating(self):
+        pass
