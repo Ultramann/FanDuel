@@ -111,7 +111,6 @@ class Team():
     def value(self, position_weights={'QB':1, 'WR1':.95, 'WR2':.8, 'WR3':.6, 
                                         'RB1':.95, 'RB2':.7, 'TE':.7, 'K':.3, 'D':.2}):
         total_value = 0
-
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
             total_value += (player.rating + player.rating_mutation) * position_weights[position]
@@ -141,14 +140,7 @@ class Team():
         old_player = getattr(self, position)
         player_dict = getattr(all_players, simple_position)
         new_player = player_dict[random.choice(player_dict.keys())]
-        if (old_player.salary > new_player.salary):
-            other_position = random.choice(list(set(positions) - [position]))
-            other_simple_position = ''.join(i for i in other_position if not i.isdigit())
-            old_other_player = getattr(self, other_position)
-            other_player_dict = getattr(all_players, other_simple_position)
-            new_other_player = other_player_dict[random.choice(other_player_dict.keys())]
-            while True:
-                
+        setattr(self, position, new_player)
 
     def mutate_rating(self):
         weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
