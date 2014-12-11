@@ -62,6 +62,7 @@ class Player():
             setattr(self, re.sub(r'[^a-zA-Z0-9]','', attribute.lower()), data) 
             
 class Team(PlayerDictionary):
+    positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
                                 'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
         for position, player in set_positions_dict.iteritems():
@@ -129,4 +130,11 @@ class Team(PlayerDictionary):
         pass
 
     def mutate_rating(self):
-        pass
+        weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
+        vol_level_dict = {vol_level: [player for position in positions if player.volatility == vol_level] for vol_level in range(1, 6)]}
+        # Choose a random volatility level from weighted list of levels
+        while 1:
+            rand_vol_level = random.choice(weighted_vol_list)
+            if len(vol_level_dict[rand_col_level]) != 0: break
+
+        
