@@ -59,9 +59,9 @@ class Player():
     def __init__(self, player_name, player_data_dict):
         self.name = player_name
         for attribute, data in player_data_dict.items():
-            setattr(self, re.sub(r'[^a-zA-Z0-9]','', attribute.lower()), data) 
+            setattr(self, re.sub(r'[^a-zA-Z0-9]','_', attribute.lower()), data) 
             
-class Team(PlayerDictionary):
+class Team():
     positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
                                 'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
@@ -78,8 +78,8 @@ class Team(PlayerDictionary):
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
             string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % (position, player.name,
-                                            player.salary, player.rating, player.ratingmutation,
-                                            player.rating + player.ratingmutation)
+                                            player.salary, player.rating, player.rating_mutation,
+                                            player.rating + player.rating_mutation)
         
         string_form += '\n' + '-' * 86
         string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % ('', 'Total:', self.cost(), 
@@ -108,12 +108,13 @@ class Team(PlayerDictionary):
             
         return Team(crossed_team_dict)
 
-    def value(self):
+    def value(self, position_weights={'QB':1, 'WR1':.95, 'WR2':.8, 'WR3':.6, 
+                                        'RB1':.95, 'RB2':.7, 'TE':.7, 'K':.3, 'D':.2}):
         total_value = 0
 
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
-            total_value += player.rating + player.ratingmutation
+            total_value += (player.rating + player.rating_mutation) * position_weights[position]
         if self.cost() > 60000: total_value -= 100
 
         return total_value
@@ -126,8 +127,28 @@ class Team(PlayerDictionary):
 
         return total_salary
 
-    def mutate_team(self):
-        pass
+    def team_analysis(self):
+        for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
+            player = getattr(self, position)
+            value = player.rating + player.rating_mutation
+            ratio = player.salary / value
+            print 'Cost to value ratio: {} : {} = {}'.format(player.salary, value, ratio)
+    
+    def mutate_team(self, all_players):
+        positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
+        position = random.choice(positions)
+        simple_position = ''.join(i for i in position if not i.isdigit())
+        old_player = getattr(self, position)
+        player_dict = getattr(all_players, simple_position)
+        new_player = player_dict[random.choice(player_dict.keys())]
+        if (old_player.salary > new_player.salary):
+            other_position = random.choice(list(set(positions) - [position]))
+            other_simple_position = ''.join(i for i in other_position if not i.isdigit())
+            old_other_player = getattr(self, other_position)
+            other_player_dict = getattr(all_players, other_simple_position)
+            new_other_player = other_player_dict[random.choice(other_player_dict.keys())]
+            while True:
+                
 
     def mutate_rating(self):
         weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
