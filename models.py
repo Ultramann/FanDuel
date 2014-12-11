@@ -35,7 +35,7 @@ class PlayerDictionary():
             
             # Get random player from simple_position in master dict
             position_dict = getattr(self, simple_position)
-            rand_player = random.choice(position_dict.keys()) # Check to see if we can take off .keys()
+            rand_player = random.choice(position_dict.keys())
             
             # Set accrodingly in rand_teams dict
             rand_team_dict[position] = position_dict[rand_player]
@@ -69,16 +69,20 @@ class Team(PlayerDictionary):
 
     def __str__(self):
         # Begin with heading for the string representation
-        string_form = '%-10s %-25s %-8s %-9s %-14s %-14s' % ('Position', 'Player', 'Salary', 
+        string_form = '%-10s %-25s %-8s %-9s %-16s %-14s' % ('Position', 'Player', 'Salary', 
                                                 'Rating', 'Rating Mutation', 'Mutated Rating')
         string_form += '\n' + '-' * 86
 
         # Add in a line for each position with the same format
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
-            string_form += '\n%-10s %-25s %-8s %-9s %-14s %-14s' % (position, player.name,
+            string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % (position, player.name,
                                             player.salary, player.rating, player.ratingmutation,
                                             player.rating + player.ratingmutation)
+        
+        string_form += '\n' + '-' * 86
+        string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % ('', 'Total:', self.cost(), 
+                                                                    '', '', self.value())
         return string_form
 
     def __add__(self, other):
@@ -103,3 +107,20 @@ class Team(PlayerDictionary):
             
         return Team(crossed_team_dict)
 
+    def value(self):
+        total_value = 0
+
+        for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
+            player = getattr(self, position)
+            total_value += player.rating + player.ratingmutation
+        if self.cost() > 60000: total_value -= 100
+
+        return total_value
+
+    def cost(self):
+        total_salary = 0
+        for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
+            player = getattr(self, position)
+            total_salary += player.salary
+
+        return total_salary
