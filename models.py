@@ -59,35 +59,47 @@ class Player():
     def __init__(self, player_name, player_data_dict):
         self.name = player_name
         for attribute, data in player_data_dict.items():
-            setattr(self, attribute.lower(), data) 
+            setattr(self, re.sub(r'[^a-zA-Z0-9]','', attribute.lower()), data) 
             
 class Team(PlayerDictionary):
-    # MAYBE THIS SHOULD JUST BE A DICTIONARY...THOUGH IT SEEMS TO BE WORKING
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
                                 'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
         for position, player in set_positions_dict.iteritems():
             setattr(self, position, player)
+
     def __str__(self):
-        # This defines the how the object is printed as a string
-        pass
+        # Begin with heading for the string representation
+        string_form = '%-10s %-25s %-8s %-9s %-14s %-14s' % ('Position', 'Player', 'Salary', 
+                                                'Rating', 'Rating Mutation', 'Mutated Rating')
+        string_form += '\n' + '-' * 86
+
+        # Add in a line for each position with the same format
+        for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
+            player = getattr(self, position)
+            string_form += '\n%-10s %-25s %-8s %-9s %-14s %-14s' % (position, player.name,
+                                            player.salary, player.rating, player.ratingmutation,
+                                            player.rating + player.ratingmutation)
+        return string_form
+
     def __add__(self, other):
         # Type check
-        if type(other) is not Team:
-            raise TypeError('unsupported operand type(s) for +' + ': \''
-                            +type_as_str(self)+'\' and \''+type_as_str(right)+'\'')
+        #if type(other) is not Team:
+        #    raise TypeError('unsupported operand type(s) for +' + ': \''
+        #                    +type_as_str(self)+'\' and \''+type_as_str(right)+'\'')
         
         # Choose which positions come from which team
         team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         self_positions_kept = random.sample(team_positions, 
                                             random.randint(1, len(team_positions )))
-        other_postions_kept = list(set(team_positions) - set(self_positions_kept))
+        other_positions_kept = list(set(team_positions) - set(self_positions_kept))
         
         # Fill dict for crossed team with corresponding players
         # from the self and other's positions
         crossed_team_dict = {}
-        for position in self_position_kept:
+        for position in self_positions_kept:
             crossed_team_dict[position] = getattr(self, position)
         for position in other_positions_kept:
             crossed_team_dict[position] = getattr(other, position)
             
         return Team(crossed_team_dict)
+
