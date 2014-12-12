@@ -114,6 +114,8 @@ class Team():
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
             total_value += (player.rating + player.rating_mutation) * position_weights[position]
+            # HAVE SOMETHING IN HERE THAT LOWERS VALUE OF THE TEAM'S TOTAL VOLITILITY IS OVER SOME VALUE...
+            # MAYBE DO THE SAME THING WITH RATING MUTATION
         if self.cost() > 60000: total_value -= 100
 
         return total_value
@@ -143,11 +145,40 @@ class Team():
         setattr(self, position, new_player)
 
     def mutate_rating(self):
+        # Construct weighted list of volitility levels
         weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
-        vol_level_dict = {vol_level: [player for position in positions if player.volatility == vol_level] for vol_level in range(1, 6)]}
+        
+        # Construct dict of volitility levels with list of player at that level as values
+        vol_level_dict = {vol_level: [position for position in positions if getattr(self, position).volatility == vol_level] 
+                          for vol_level in range(1, 6)]}
+                          
         # Choose a random volatility level from weighted list of levels
         while 1:
             rand_vol_level = random.choice(weighted_vol_list)
-            if len(vol_level_dict[rand_col_level]) != 0: break
-
+            # Can't choose from as list with nothing in it...
+            if len(vol_level_dict[rand_vol_level]) != 0: break
         
+        # Get player at random position
+        position = random.choice(vol_level_dict[rand_vol_level])
+        player = getattr(self, position)
+        player_mutated_rating = player.rating + player.rating_mutation
+        
+        # Choose rating mutation
+        if 0 < player_mutated_rating < 10 and player_mutated_rating != 0:
+            if player.rating_mutation > 0: direction = 1
+            elif player.rating_mutation < 0: direction = -1
+            chance = random.uniform(-1, 5)
+            if 0.5 < chance <= (5 - player.rating_mutation * direction):
+                rating_mutation = direction
+            elif 0 < chance <= 0.5:
+                rating_mutation = -1 * direction
+            elif (5 - player.rating_mutation * direction) < chance <=5
+                rating_mutation = -1 * direction
+            else: rating_mutation = 0
+        elif player.rating_mutation == 10: rating_mutation = random.choice([0, -1])
+        elif player.rating_mutation == 0: rating_mutation = random.choice([0, 1])
+        else: rating_mutation = random.choice([-1, 0, 1])
+        
+        # Mutate rating
+        player.rating_mutation += rating_mutation
+        setattr(self, position, player)
