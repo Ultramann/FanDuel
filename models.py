@@ -38,7 +38,8 @@ class PlayerDictionary():
             rand_player = random.choice(position_dict.keys())
             
             # Set accrodingly in rand_teams dict
-            rand_team_dict[position] = position_dict[rand_player]
+            player = position_dict[rand_player]
+            rand_team_dict[position] = Player(player.name, player.to_dict())
             
         return Team(rand_team_dict)
         
@@ -60,7 +61,13 @@ class Player():
         self.name = player_name
         for attribute, data in player_data_dict.items():
             setattr(self, re.sub(r'[^a-zA-Z0-9]','_', attribute.lower()), data) 
-    
+
+    def to_dict(self):
+        attributes = ['fppg', 'gp', 'name', 'position', 'rating', 
+                        'rating_mutation', 'salary', 'volatility']
+        player_dict = {attribute: getattr(self, attribute) for attribute in attributes}
+        return player_dict
+
     # NEED TO FIGURE OUT HOW TO MAKE DEEPCOPIES OF PLAYERS AND BRING THEM THROUGH WHENEVER COPYING A PLAYER 
             
 class Team():
@@ -105,9 +112,11 @@ class Team():
         # from the self and other's positions
         crossed_team_dict = {}
         for position in self_positions_kept:
-            crossed_team_dict[position] = getattr(self, position)
+            player = getattr(self, position)
+            crossed_team_dict[position] = Player(player.name, player.to_dict())
         for position in other_positions_kept:
-            crossed_team_dict[position] = getattr(other, position)
+            player = getattr(self, position)
+            crossed_team_dict[position] = Player(player.name, player.to_dict())
             
         return Team(crossed_team_dict)
 
@@ -138,12 +147,12 @@ class Team():
             ratio = value / player.salary
             print 'Cost to value ratio: {} : {} = {}'.format(player.salary, value, ratio)
 
-    def team_dict(self):
+    def to_dict(self):
         team = {position: getattr(self, position) for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']}
         return team   
     
     def mutate_team(self, all_players):
-        mutated_team = Team(self.team_dict())
+        mutated_team = Team(self.to_dict())
         positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         position = random.choice(positions)
         simple_position = ''.join(i for i in position if not i.isdigit())
@@ -154,7 +163,7 @@ class Team():
         return mutated_team
 
     def mutate_rating(self):
-        mutated_team = Team(self.team_dict())
+        mutated_team = Team(self.to_dict())
         positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         # Construct weighted list of volitility levels
         weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
@@ -170,7 +179,8 @@ class Team():
         
         # Get player at random position
         position = random.choice(vol_level_dict[rand_vol_level])
-        player = getattr(mutated_team, position)
+        old_player = getattr(mutated_team, position)
+        player = Player(old_player.name, old_player.to_dict())
         player_mutated_rating = player.rating + player.rating_mutation
         
         # Choose rating mutation
