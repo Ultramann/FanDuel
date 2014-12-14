@@ -60,9 +60,12 @@ class Player():
         self.name = player_name
         for attribute, data in player_data_dict.items():
             setattr(self, re.sub(r'[^a-zA-Z0-9]','_', attribute.lower()), data) 
+    
+    # NEED TO FIGURE OUT HOW TO MAKE DEEPCOPIES OF PLAYERS AND BRING THEM THROUGH WHENEVER COPYING A PLAYER 
             
 class Team():
     positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
+
     def __init__(self, set_positions_dict={'QB': None, 'WR1': None, 'WR2': None, 'WR3': None, 
                                 'RB1': None, 'RB2': None, 'TE': None, 'K': None, 'D': None}):
         for position, player in set_positions_dict.iteritems():
@@ -78,8 +81,8 @@ class Team():
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
             string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % (position, player.name,
-                                            player.salary, player.rating, player.rating_mutation,
-                                            player.rating + player.rating_mutation)
+                                          player.salary, player.rating, player.rating_mutation,
+                                          player.rating + player.rating_mutation)
         
         string_form += '\n' + '-' * 86
         string_form += '\n%-10s %-25s %-8s %-9s %-16s %-14s' % ('', 'Total:', self.cost(), 
@@ -132,19 +135,26 @@ class Team():
         for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']:
             player = getattr(self, position)
             value = player.rating + player.rating_mutation
-            ratio = player.salary / value
+            ratio = value / player.salary
             print 'Cost to value ratio: {} : {} = {}'.format(player.salary, value, ratio)
+
+    def team_dict(self):
+        team = {position: getattr(self, position) for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']}
+        return team   
     
     def mutate_team(self, all_players):
+        mutated_team = Team(self.team_dict())
         positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         position = random.choice(positions)
         simple_position = ''.join(i for i in position if not i.isdigit())
-        old_player = getattr(self, position)
+        old_player = getattr(mutated_team, position)
         player_dict = getattr(all_players, simple_position)
         new_player = player_dict[random.choice(player_dict.keys())]
-        setattr(self, position, new_player)
+        setattr(mutated_team, position, new_player)
+        return mutated_team
 
     def mutate_rating(self):
+        mutated_team = Team(self.team_dict())
         positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         # Construct weighted list of volitility levels
         weighted_vol_list = [x for y in range(1, 6) for x in range(y, 6)]
@@ -160,7 +170,7 @@ class Team():
         
         # Get player at random position
         position = random.choice(vol_level_dict[rand_vol_level])
-        player = getattr(self, position)
+        player = getattr(mutated_team, position)
         player_mutated_rating = player.rating + player.rating_mutation
         
         # Choose rating mutation
@@ -181,4 +191,5 @@ class Team():
         
         # Mutate rating
         player.rating_mutation += rating_mutation
-        setattr(self, position, player)
+        setattr(mutated_team, position, player)
+        return mutated_team
