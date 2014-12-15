@@ -35,7 +35,13 @@ class PlayerDictionary():
             
             # Get random player from simple_position in master dict
             position_dict = getattr(self, simple_position)
-            rand_player = random.choice(position_dict.keys())
+            while True:
+                rand_player = random.choice(position_dict.keys())
+                old_player = False
+                for existing_position in rand_team_dict:
+                    player = rand_team_dict[existing_position]
+                    if player.name == rand_player: old_player = True
+                if not old_player: break
             
             # Set accrodingly in rand_teams dict
             player = position_dict[rand_player]
@@ -145,7 +151,8 @@ class Team():
             player = getattr(self, position)
             value = player.rating + player.rating_mutation
             ratio = value / player.salary
-            print 'Cost to value ratio: {} : {} = {}'.format(player.salary, value, ratio)
+            print '{}: {}, cost to value ratio: {} : {} = {}'.format(position, player.name,
+                                                                player.salary, value, ratio)
 
     def to_dict(self):
         team = {position: getattr(self, position) for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']}
@@ -155,9 +162,8 @@ class Team():
         mutated_team = Team(self.to_dict())
         positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         position = random.choice(positions)
-        simple_position = ''.join(i for i in position if not i.isdigit())
         old_player = getattr(mutated_team, position)
-        player_dict = getattr(all_players, simple_position)
+        player_dict = getattr(all_players, getattr(old_player, 'position'))
         new_player = player_dict[random.choice(player_dict.keys())]
         setattr(mutated_team, position, new_player)
         return mutated_team
