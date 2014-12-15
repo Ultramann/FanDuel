@@ -42,6 +42,23 @@ class PlayerDictionary():
             rand_team_dict[position] = Player(player.name, player.to_dict())
             
         return Team(rand_team_dict)
+    
+    def mutate_team(self, team):
+        # Copy team
+        mutated_team = Team(team.to_dict())
+        
+        # Choose random position in team to swap with new player
+        positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
+        position = random.choice(positions)
+        simple_position = ''.join(i for i in position if not i.isdigit())
+        
+        # Get a new player at that position 
+        player_dict = getattr(self, simple_position)
+        player = player_dict[random.choice(player_dict.keys())]
+        
+        # Put a copy of the new player mutated team
+        setattr(mutated_team, position, Player(player.name, player.to_dict())
+        return mutated_team    
         
 class SimplePlayerDictionary():
     # Master dictionary with all the player objects as attributes
@@ -150,17 +167,6 @@ class Team():
     def to_dict(self):
         team = {position: getattr(self, position) for position in ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']}
         return team   
-    
-    def mutate_team(self, all_players):
-        mutated_team = Team(self.to_dict())
-        positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
-        position = random.choice(positions)
-        simple_position = ''.join(i for i in position if not i.isdigit())
-        old_player = getattr(mutated_team, position)
-        player_dict = getattr(all_players, simple_position)
-        new_player = player_dict[random.choice(player_dict.keys())]
-        setattr(mutated_team, position, new_player)
-        return mutated_team
 
     def mutate_rating(self):
         mutated_team = Team(self.to_dict())
