@@ -30,7 +30,7 @@ def genetic_optimize(player_dict, pop_size=50, step=1, team_mutation_prob=0.2,
             if random.random() < team_mutation_prob:
                 # Mutate team
                 team = ranked_teams[random.randint(0, top_elite)]
-                mutated_team = team.mutate_team(all_players)
+                mutated_team = all_players.mutate_team(team)
 
             elif random.random() < rank_mutation_prob:
                 # Mutate random player's ranking

@@ -91,8 +91,6 @@ class Player():
         player_dict = {attribute: getattr(self, attribute) for attribute in attributes}
         return player_dict
 
-    # NEED TO FIGURE OUT HOW TO MAKE DEEPCOPIES OF PLAYERS AND BRING THEM THROUGH WHENEVER COPYING A PLAYER 
-            
 class Team():
     positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
 
