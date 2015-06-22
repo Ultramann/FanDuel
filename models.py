@@ -59,11 +59,14 @@ class PlayerDictionary():
         simple_position = ''.join(i for i in position if not i.isdigit())
         
         # Get a new player at that position 
+        old_player = getattr(team, position)
         player_dict = getattr(self, simple_position)
-        player = player_dict[random.choice(player_dict.keys())]
+        while True:
+            player = player_dict[random.choice(player_dict.keys())]
+            if player.name != old_player.name: break
         
         # Put a copy of the new player mutated team
-        setattr(mutated_team, position, Player(player.name, player.to_dict())
+        setattr(mutated_team, position, Player(player.name, player.to_dict()))
         return mutated_team    
         
 class SimplePlayerDictionary():

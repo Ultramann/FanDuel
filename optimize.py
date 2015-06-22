@@ -1,5 +1,6 @@
 import models
 import random
+import nfldb
 
 def genetic_optimize(player_dict, pop_size=50, step=1, team_mutation_prob=0.2,
                          rank_mutation_prob=.05, elite=0.2, max_iterations=100):
@@ -54,3 +55,9 @@ def genetic_optimize(player_dict, pop_size=50, step=1, team_mutation_prob=0.2,
                 population.append(mutated_team)
     print scores[0][1]
     return scores[0][1]
+
+def get_o_stats(player_df):
+    player_df['O-Rating'] = 0
+    for player in player_df.index:
+        pass
+    pass
