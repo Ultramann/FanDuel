@@ -128,19 +128,26 @@ class Team():
         
         # Choose which positions come from which team
         team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
-        self_positions_kept = random.sample(team_positions, 
-                                            random.randint(1, len(team_positions)))
-        other_positions_kept = list(set(team_positions) - set(self_positions_kept))
-        
-        # Fill dict for crossed team with corresponding players
-        # from the self and other's positions
-        crossed_team_dict = {}
-        for position in self_positions_kept:
-            player = getattr(self, position)
-            crossed_team_dict[position] = Player(player.name, player.to_dict())
-        for position in other_positions_kept:
-            player = getattr(other, position)
-            crossed_team_dict[position] = Player(player.name, player.to_dict())
+        while True:
+            self_positions_kept = random.sample(team_positions, 
+                                                random.randint(1, len(team_positions)))
+            other_positions_kept = list(set(team_positions) - set(self_positions_kept))
+            
+            # Fill dict for crossed team with corresponding players
+            # from the self and other's positions
+            crossed_team_dict = {}
+            # List of player names to check if there are repeats
+            players = []
+            for position in self_positions_kept:
+                player = getattr(self, position)
+                crossed_team_dict[position] = Player(player.name, player.to_dict())
+                players.append(player.name)
+            for position in other_positions_kept:
+                player = getattr(other, position)
+                crossed_team_dict[position] = Player(player.name, player.to_dict())
+                player.append(player.name)
+            # Check if there are as many unique player names as there are positions
+            if len(set(players)) == 9: break
             
         return Team(crossed_team_dict)
 
