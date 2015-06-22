@@ -129,7 +129,7 @@ class Team():
         # Choose which positions come from which team
         team_positions = ['QB', 'WR1', 'WR2', 'WR3', 'RB1', 'RB2', 'TE', 'K', 'D']
         self_positions_kept = random.sample(team_positions, 
-                                            random.randint(1, len(team_positions )))
+                                            random.randint(1, len(team_positions)))
         other_positions_kept = list(set(team_positions) - set(self_positions_kept))
         
         # Fill dict for crossed team with corresponding players
@@ -139,7 +139,7 @@ class Team():
             player = getattr(self, position)
             crossed_team_dict[position] = Player(player.name, player.to_dict())
         for position in other_positions_kept:
-            player = getattr(self, position)
+            player = getattr(other, position)
             crossed_team_dict[position] = Player(player.name, player.to_dict())
             
         return Team(crossed_team_dict)
