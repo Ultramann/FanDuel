@@ -4,7 +4,7 @@ import nfldb
 
 def genetic_optimize(player_dict, pop_size=50, step=1, team_mutation_prob=0.2,
                          rank_mutation_prob=.05, elite=0.2, max_iterations=100):
-    # CONSIDER ADDING VALUE_FUCNTION AS A PARAMETER
+    # CONSIDER ADDING VALUE_FUCNTION AS A PARAMETER   
     # Make all players object
     all_players = models.PlayerDictionary(player_dict)
     
